@@ -94,7 +94,7 @@
     function goToNextPage() {
         var selectedValue = document.getElementById('assetSelect').value;
         if (selectedValue) {
-            window.location.href = 'game.html?asset=' + encodeURIComponent(selectedValue);
+            window.location.href = 'views/game.html?asset=' + encodeURIComponent(selectedValue);
         } else {
             alert('항목을 선택해 주세요.');
         }
