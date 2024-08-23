@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="KOSA투자증권" content="width=device-width, initial-scale=1.0">
+    <title>KOSA투자증권</title>
+    <link rel="stylesheet" href="../css/modal.css">
+    <link rel="stylesheet" href="../css/gameMain.css">
+    <script src="../jquery-3.7.1.js"></script>
+</head>
+<body>
+<div class="container">
+    <!-- 우측 게임 현황 영역 -->
+    <div class="infoArea">
+        <!-- 게임 라운드 -->
+        <div class="roundInfo">
+            <span>01</span>/<span>20턴</span>
+        </div>
+        <!-- 정보 및 버튼 -->
+        <div class="topSection">
+            <div class="tradeButtons">
+                <button id="buyBtn" class="buyBtn">매수</button>
+                <button id="sellBtn" class="sellBtn">매도</button>
+            </div>
+            <button id="nextBtn" class="nextBtn">다음 턴</button>
+        </div>
+
+        <!-- 매수 모달 화면 -->
+        <div id="buyModal" class="modal">
+            <div class="content">
+                <span class="close1" id="buyClose">&times;</span>
+                <h2 class="buyTitle">매수 주문</h2>
+                <div class="orderInfo">
+                    <div>
+                        <label for="orderQuantity">주문수량</label>
+                        <input type="number" id="orderQuantity" value="0">
+                    </div>
+                    <div class="orderAvailability">주문가능 <span id="orderPossibility" class="highlight"></span> 코인</div>
+                </div>
+                <div class="percentageButtons">
+                    <button id="percent1" class="percentBtn">10%</button>
+                    <button id="percent2" class="percentBtn">25%</button>
+                    <button id="percent3" class="percentBtn">50%</button>
+                    <button id="percent4" class="percentBtn">100%</button>
+                </div>
+                <div class="priceInfo">
+                    <div>주문단가 <span id="orderPrice" class="price" ></span>원</div>
+                    <div>총 주문금액 <span id="totalOrderPrice" class="totalPrice"></span>원</div>
+                </div>
+                <div class="actions">
+                    <button id="cancel" class="cancelBtn">취소</button>
+                    <button id="buy" class="buyBtn">매수</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 매도 모달 화면 -->
+        <div id="sellModal" class="modal">
+            <div class="content">
+                <span class="close" id="sellClose">&times;</span>
+                <h2 class="sellTitle">매도 주문</h2>
+                <div class="orderInfo">
+                    <div>
+                        <label for="orderQuantity1">주문수량</label>
+                        <input type="number" id="orderQuantity1" value="0">
+                    </div>
+                    <div class="orderAvailability1">주문가능 <span id="orderPossibility1" class="highlight1"></span> 코인</div>
+                </div>
+                <div class="percentageButtons">
+                    <button id="percent10" class="percentBtn">10%</button>
+                    <button id="percent25" class="percentBtn">25%</button>
+                    <button id="percent50" class="percentBtn">50%</button>
+                    <button id="percent100" class="percentBtn">100%</button>
+                </div>
+                <div class="priceInfo">
+                    <div>주문단가 <span id="orderPrice1" class="price"></span> 원</div>
+                    <div>총 주문금액 <span id="totalOrderPrice1" class="totalPrice"></span>원</div>
+                </div>
+                <div class="actions">
+                    <button id="cancel1" class="cancelBtn1">취소</button>
+                    <button id="sell" class="sellBtn">매도</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 현황 -->
+        <div class="gameStatus">
+            <h3>게임현황</h3>
+            <div class="initialAsset">초기자산 10,000,000원</div>
+            <div class="totalAsset">
+                <div>총 평가자산</div>
+                <div><span id="totalValue" class="initialAsset"></span>원</div>
+                <div class="change"><span id="changePercent" class="change"></span>(%)</div>
+            </div>
+            <table>
+                <tr>
+                    <th>보유현금</th>
+                    <td id="cash"></td>
+                </tr>
+                <tr>
+                    <th>코인평가금</th>
+                    <td id="coinValue"></td>
+                </tr>
+                <tr>
+                    <th>코인수</th>
+                    <td id="coinCount"></td>
+                </tr>
+                <tr>
+                    <th>평단가</th>
+                    <td id="averagePrice">--</td>
+                </tr>
+                <tr>
+                    <th>현재가</th>
+                    <td><span id="currentPrice"></span>원</td>
+                </tr>
+                <tr>
+                    <th>평가수익률</th>
+                    <td id="ROI"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 매매 내역 -->
+        <div class="tradeHistory">
+            <span id="history">매매내역이 없습니다.</span>
+        </div>
+    </div>
+</div>
+<script src="../js/gameMain.js"></script>
+</body>
+</html>
