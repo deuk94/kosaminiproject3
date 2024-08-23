@@ -35,7 +35,7 @@
                         <label for="orderQuantity">주문수량</label>
                         <input type="number" id="orderQuantity" value="0">
                     </div>
-                    <div class="orderAvailability">주문가능 <span id="orderPossibility" class="highlight"></span> 코인</div>
+                    <div class="orderAvailability">주문가능 <span id="orderPossibility" class="highlight"></span>코인</div>
                 </div>
                 <div class="percentageButtons">
                     <button id="percent1" class="percentBtn">10%</button>
@@ -64,7 +64,7 @@
                         <label for="orderQuantity1">주문수량</label>
                         <input type="number" id="orderQuantity1" value="0">
                     </div>
-                    <div class="orderAvailability1">주문가능 <span id="orderPossibility1" class="highlight1"></span> 코인</div>
+                    <div class="orderAvailability1">주문가능 <span id="orderPossibility1" class="highlight1"></span>코인</div>
                 </div>
                 <div class="percentageButtons">
                     <button id="percent10" class="percentBtn">10%</button>
@@ -89,43 +89,48 @@
             <div class="initialAsset">초기자산 10,000,000원</div>
             <div class="totalAsset">
                 <div>총 평가자산</div>
-                <div><span id="totalValue" class="initialAsset"></span>원</div>
-                <div class="change"><span id="changePercent" class="change"></span>(%)</div>
+                <div><span id="totalValue" class="initialAsset">10,000,000</span>원</div>
+                <div class="change"><span id="changePercent" class="change"></span></div>
             </div>
             <table>
                 <tr>
                     <th>보유현금</th>
-                    <td id="cash"></td>
+                    <td><sapn id="cash"></sapn>원</td>
                 </tr>
                 <tr>
                     <th>코인평가금</th>
-                    <td id="coinValue"></td>
+                    <td><span id="coinValue">0</span>원</td>
                 </tr>
                 <tr>
                     <th>코인수</th>
-                    <td id="coinCount"></td>
+                    <td><span id="coinCount">0</span>개</td>
                 </tr>
                 <tr>
                     <th>평단가</th>
-                    <td id="averagePrice">--</td>
+                    <td ><span id="averagePrice">0</span>원</td>
                 </tr>
                 <tr>
                     <th>현재가</th>
-                    <td><span id="currentPrice"></span>원</td>
+                    <td><span id="currentPrice">0</span>원</td>
                 </tr>
                 <tr>
                     <th>평가수익률</th>
-                    <td id="ROI"></td>
+                    <td id="ROI">0%</td>
                 </tr>
             </table>
         </div>
 
         <!-- 매매 내역 -->
         <div class="tradeHistory">
-            <span id="history">매매내역이 없습니다.</span>
+            <table id="tradeList">
+                <tr>
+                    <td id="history">매매내역이 없습니다.</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
 <script src="../js/gameMain.js"></script>
+
 </body>
 </html>

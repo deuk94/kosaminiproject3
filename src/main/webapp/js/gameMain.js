@@ -3,11 +3,13 @@ $(document).ready(function () {
     // 매수 버튼 클릭 시 매수 모달 보이기
     $("#buyBtn").click(function () {
         $("#buyModal").show();
+        $("#orderQuantity").val(0);
     });
 
     // 매도 버튼 클릭 시 매도 모달 보이기
     $("#sellBtn").click(function () {
         $("#sellModal").show();
+        $("#orderQuantity").val(0);
     });
 
     // 매수 모달 닫기 (X 버튼 클릭 시)
@@ -39,9 +41,13 @@ $(document).ready(function () {
         $("#orderPossibility").text((parseInt($("#cash").text()) / currentPrice)); // 매수 가능 코인 수량 업데이트
         $("#orderPrice").text(currentPrice); // 주문 단가 업데이트
         $("#orderPrice1").text(currentPrice);
+
+        // 수정 사항 - 주문 가능 코인 내림 처리
+        $("#orderPossibility").text(
+            Math.floor(parseFloat($("#cash").text()) / parseFloat($("#currentPrice").text()))
+        );
     });
 });
-
 
 $(document).on("click", function (event) {
     // 매수 모달 바깥 영역 클릭 시 모달 닫기
@@ -57,56 +63,66 @@ $(document).on("click", function (event) {
 // ------------------------------------------------ 기능구현 ----------------------------------------------------
 
 let initialAccount = 10000000; // 초기 자산
-let cash = $("#cash").text(initialAccount);
+let cash = $("#cash").text(initialAccount); // 초기 보유
 let coinCount = $("#coinCount").text(0);
 
 $(document).ready(function () {
+
 // ------------------------------------------------ 매수 ------------------------------------------------------
+
     // 매수 주문가능 코인 수량 업데이트
-    $("#orderPossibility").text($("#cash").text() / parseInt($("#currentPrice").text()));
+    // 수정 사항 - 주문 가능 코인 내림 처리
+    $("#orderPossibility").text(
+        Math.floor(parseFloat($("#cash").text()) / parseFloat($("#currentPrice").text()))
+    );
 
     // 매수 주문 수량 입력 시
+    // 수정 사항 - 매수시 기존 수량 넘어갈 시, 음수 입력시 다시 입력
     $('#orderQuantity').on('input', function () {
         let orderQuantity = parseInt($(this).val()) || 0; // 수량이 비어있을 경우 0으로 처리
-
-        // 총 매수 주문 금액 업데이트
-        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        let orderPossibility = parseInt($("#orderPossibility").text()); // 가능 수량
+        if (orderQuantity > orderPossibility) {
+            alert("입력한 주문 수량이 최대 가능 수량을 초과했습니다. 다시 입력해주세요.");
+            $(this).val(''); // 입력 필드를 비웁니다
+        }else if (orderQuantity < 0) {
+            alert("주문 수량은 0보다 작을 수 없습니다. 다시 입력해주세요.");
+            $(this).val(''); // 입력 필드를 비웁니다
+        } else {
+            // 총 매수 주문 금액 업데이트
+            $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        }
     });
 
     // 매수 10% 계산
+    // 수정 사항 - 주문 가능 코인 내림 처리
     $("#percent1").click(function() {
-        $("#orderQuantity").val($("#orderPossibility").text() * 0.1);
-        let orderQuantity = parseInt($("#orderQuantity").val());
-
+        $("#orderQuantity").val(Math.floor($("#orderPossibility").text() * 0.1));
         // 총 매수 주문 금액 업데이트
-        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice").text((parseInt($("#currentPrice").text().replace(/,/g, '')) * parseInt($("#orderQuantity").val().replace(/,/g, ''))).toLocaleString());
     });
 
     // 매수 25% 계산
+    // 수정 사항 - 주문 가능 코인 내림 처리
     $("#percent2").click(function() {
-        $("#orderQuantity").val($("#orderPossibility").text() * 0.25);
-        let orderQuantity = parseInt($("#orderQuantity").val());
-
+        $("#orderQuantity").val(Math.floor($("#orderPossibility").text() * 0.25));
         // 총 매수 주문 금액 업데이트
-        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity").val()));
     });
 
     // 매수 50% 계산
+    // 수정 사항 - 주문 가능 코인 내림 처리
     $("#percent3").click(function() {
-        $("#orderQuantity").val($("#orderPossibility").text() * 0.5);
-        let orderQuantity = parseInt($("#orderQuantity").val());
-
+        $("#orderQuantity").val(Math.floor($("#orderPossibility").text() * 0.5));
         // 총 매수 주문 금액 업데이트
-        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity").val()));
     });
 
     // 매수 100% 계산
+    // 수정 사항 - 주문 가능 코인 내림 처리
     $("#percent4").click(function() {
-        $("#orderQuantity").val($("#orderPossibility").text());
-        let orderQuantity = parseInt($("#orderQuantity").val());
-
+        $("#orderQuantity").val(Math.floor($("#orderPossibility").text()));
         // 총 매수 주문 금액 업데이트
-        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity").val()));
     });
 
     // 매수 결과
@@ -119,7 +135,9 @@ $(document).ready(function () {
             $("#cash").text(0);
         }
         // 매수 가능 코인 수 변화
-        $("#orderPossibility").text($("#cash").text() / parseInt($("#currentPrice").text()));
+        $("#orderPossibility").text(
+            Math.floor(parseFloat($("#cash").text()) / parseFloat($("#currentPrice").text()))
+        );
 
         //보유 코인 수 변화
         $("#coinCount").text(parseInt($("#coinCount").text()) + parseInt($("#orderQuantity").val()));
@@ -130,53 +148,91 @@ $(document).ready(function () {
 
         // 총 평가 자산
         $("#totalValue").text(parseInt($("#cash").text()) + parseInt($("#coinValue").text()));
+
+
+        // 평단가
+        let averagePrice = parseInt($("#coinValue").text()) / parseInt($("#coinCount").text());
+        $("#averagePrice").text(averagePrice);
+
+        // 수익률
+        let ROI = ((parseInt($("#totalValue").text()) - parseInt(initialAccount)) / parseInt(initialAccount) * 100);
+        ROI = Math.round(ROI * 100) / 100; // 소수점 세째자리 표시
+        $("#changePercent").text(ROI + "%");
+        $("#ROI").text(ROI + "%");
+        // 수익률에 따른 색 변화
+        if (ROI > 0) {
+            $("#changePercent").css("color", "red");
+            $("#ROI").css("color", "red");
+        } else {
+            $("#changePercent").css("color", "blue");
+            $("#ROI").css("color", "blue");
+        }
+
+        // 매매 내역을 리스트에 추가
+        $("#tradeList").append(
+            `<tr>
+                <td style="font-weight: bold; color: black"><span style="color : red">매수</span>- 수량: ${parseInt($("#orderQuantity").val())}개, 
+                    단가: ${parseInt($("#currentPrice").text())}원,
+                    총금액: ${parseInt($("#totalOrderPrice").text())}원</td>
+            </tr>`
+        );
+
+        // "매매내역이 없습니다." 문구 제거
+        $("#history").hide();
     });
+
 // ------------------------------------------------ 매도 ----------------------------------------------------
     // 매도 주문가능 코인 수량 업데이트
     $("#orderPossibility1").text($("#coinCount").text());
 
     // 매도 주문 수량 입력 시
+    // 수정 사항 - 매도시 기존 수량 넘어갈 시, 음수 입력시 다시 입력
     $('#orderQuantity1').on('input', function () {
         let orderQuantity1 = parseInt($(this).val()) || 0; // 수량이 비어있을 경우 0으로 처리
-
-        // 총 매도 주문 금액 업데이트
-        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * orderQuantity1);
+        let orderPossibility1 = parseInt($("#orderPossibility1").text()); // 가능 수량
+        if (orderQuantity1 > orderPossibility1) {
+            alert("입력한 주문 수량이 최대 가능 수량을 초과했습니다. 다시 입력해주세요.");
+            $(this).val(''); // 입력 필드를 비웁니다
+        }else if (orderQuantity1 < 0) {
+            alert("주문 수량은 0보다 작을 수 없습니다. 다시 입력해주세요.");
+            $(this).val(''); // 입력 필드를 비웁니다
+        }
+        else {
+            // 총 매수 주문 금액 업데이트
+            $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * orderQuantity1);
+        }
     });
 
     // 매도 10% 계산
+    //수정 사항 - 매도시 코인 수량 내림처리
     $("#percent10").click(function() {
-        $("#orderQuantity1").val($("#orderPossibility1").text() * 0.1);
-        let orderQuantity1 = parseInt($("#orderQuantity1").val());
-
+        $("#orderQuantity1").val(Math.floor($("#orderPossibility1").text() * 0.1));
         // 총 매도 주문 금액 업데이트
-        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * orderQuantity1);
+        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity1").val()));
     });
 
     // 매도 25% 계산
+    //수정 사항 - 매도시 코인 수량 내림처리
     $("#percent25").click(function() {
-        $("#orderQuantity1").val($("#orderPossibility1").text() * 0.25);
-        let orderQuantity = parseInt($("#orderQuantity1").val());
-
+        $("#orderQuantity1").val(Math.floor($("#orderPossibility1").text() * 0.25));
         // 총 매도 주문 금액 업데이트
-        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity1").val()));
     });
 
     // 매도 50% 계산
+    //수정 사항 - 매도시 코인 수량 내림처리
     $("#percent50").click(function() {
-        $("#orderQuantity1").val($("#orderPossibility1").text() * 0.5);
-        let orderQuantity = parseInt($("#orderQuantity1").val());
-
+        $("#orderQuantity1").val(Math.floor($("#orderPossibility1").text() * 0.5));
         // 총 매도 주문 금액 업데이트
-        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity1").val()));
     });
 
     // 매도 100% 계산
+    //수정 사항 - 매도시 코인 수량 내림처리
     $("#percent100").click(function() {
-        $("#orderQuantity1").val($("#orderPossibility1").text());
-        let orderQuantity = parseInt($("#orderQuantity1").val());
-
+        $("#orderQuantity1").val(Math.floor($("#orderPossibility1").text()));
         // 총 매도 주문 금액 업데이트
-        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * orderQuantity);
+        $("#totalOrderPrice1").text(parseInt($("#currentPrice").text()) * parseInt($("#orderQuantity1").val()));
     });
 
     // 매도 결과 적용 후 보유 현금
@@ -195,5 +251,32 @@ $(document).ready(function () {
 
         // 총 평가 자산
         $("#totalValue").text(parseInt($("#cash").text()) + parseInt($("#coinValue").text()));
+
+        // 수익률
+        let ROI = ((parseInt($("#totalValue").text()) - parseInt(initialAccount)) / parseInt(initialAccount) * 100);
+        ROI = Math.round(ROI * 100) / 100; // 소수점 세째자리 표시
+        $("#changePercent").text(ROI + "%");
+        $("#ROI").text(ROI + "%");
+
+        // 수익률에 따른 색 변화
+        if (ROI > 0) {
+            $("#changePercent").css("color", "red");
+            $("#ROI").css("color", "red");
+        } else {
+            $("#changePercent").css("color", "blue");
+            $("#ROI").css("color", "blue");
+        }
+
+        // 매도 내역을 리스트에 추가
+        $("#tradeList").append(
+            `<tr>
+                <td style="font-weight: bold; color: black"><span style="color : blue">매도</span>- 수량: ${parseInt($("#orderQuantity1").val())}개, 
+                    단가: ${parseInt($("#currentPrice").text())}원, 
+                    총금액: ${parseInt($("#totalOrderPrice1").text())}원</td>
+            </tr>`
+        );
+
+        // "매매내역이 없습니다." 문구 제거
+        $("#history").hide();
     });
 });

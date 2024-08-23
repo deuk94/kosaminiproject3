@@ -113,7 +113,13 @@ body {
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
-    text-align: center;
+    text-align: center; /* 텍스트를 가운데 정렬 */
     color: #888;
-    font-size: 14px;
+    font-size: 12px;
+}
+
+.tradeHistory p {
+    margin: 0; /* 문단 간의 기본 여백 제거 */
+    padding: 5px 0; /* 위아래 여백 추가 */
+    display: block; /* 각 내역이 새로운 줄에 나오도록 설정 */
 }
