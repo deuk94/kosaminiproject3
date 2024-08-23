@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자동 모달 예제</title>
+    <link rel="icon" type="image/x-icon" href="../resources/assets/favicon.ico" />
+    <link rel="stylesheet" href="../resources/css/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        #startButton, #cancelButton {
+            width: 100px;
+            height: 35px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        p{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="myModal" class="startModal">
+    <div class="startModal-content">
+        <span class="close">&times;</span>
+        <h4>코사 투자증권 모의투자</h4>
+        <p>과거 랜덤차트로 투자실력 키우기!</p>
+        <img>
+        <p>총 20~25턴 내에서 적절한 타이밍에
+            <br>
+        <span style="color: red;">매수</span>
+        <span>,</span>
+        <span style="color: blue;">매도</span>
+        <span>하고 수익을 올려보세요</span>
+        </p>
+        <br>
+        <button type="button" class="btn btn-primary" id="startButton">시작</button>
+        <br>
+        <button type="button" class="btn btn-danger" id="cancelButton">취소</button>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        const modal = document.getElementById("myModal");
+        const span = document.getElementsByClassName("close")[0];
+
+        // 모달을 보이도록 설정
+        modal.style.display = "block";
+
+        // 엑스 버튼 클릭 시 모달 닫기
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // 모달 바깥 영역 클릭 시 모달 닫기
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        const startButton = document.getElementById("startButton");
+        startButton.onclick = function() {
+            modal.style.display = "none"; // 모달창 닫기
+        };
+
+        // 취소 버튼 클릭 시 index.html로 이동
+        const cancelButton = document.getElementById("cancelButton");
+        cancelButton.onclick = function() {
+            // 취소선택시 index.html로 돌아가기
+            window.location.href = "index.html";
+        }
+
+        // 쿼리 문자열에서 선택된 자산 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedAsset = urlParams.get('asset');
+        if (selectedAsset) {
+            document.getElementById('selectedAsset').textContent += selectedAsset;
+        } else {
+            document.getElementById('selectedAsset').textContent += '없음';
+        }
+    }
+</script>
+</body>
+</html>
