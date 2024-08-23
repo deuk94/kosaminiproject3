@@ -70,7 +70,7 @@ $(document).on("click", function (event) {
 
 let initialAccount = 10000000; // 초기 자산
 $("#cash").data('value',initialAccount); // 초기 보유
-$("#cash").text(initialAccount);
+$("#cash").text(initialAccount.toLocaleString());
 let coinCount = 0;
 $("#coinCount").data('value',coinCount);
 $("#coinCount").text(coinCount);
