@@ -3,6 +3,8 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    display: flex;
+    justify-content: flex-end; /* 전체를 오른쪽으로 붙이기 */
 }
 
 /* 게임 현황 영역 */
@@ -24,8 +26,40 @@ body {
 }
 
 .roundInfo {
-    font-size: 18px;
+    font-size: 20px; /* 수정: 폰트 크기 통일 */
     font-weight: bold;
+    color: #d9534f; /* 수정: 색상 통일 */
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.roundInfo #turn {
+    font-size: 30px; /* 추가: 현재 턴 숫자 크기 */
+    color: #d9534f; /* 추가: 현재 턴 숫자 색상 */
+}
+
+.roundInfo #lastTurn {
+    font-size: 16px; /* 추가: 전체 턴 숫자 크기 */
+    color: #888; /* 추가: 회색 */
+}
+
+/* 진행 바 */
+.progressBar {
+    width: 100%;
+    height: 3px;
+    background-color: #e0e0e0;
+    margin-top: 5px;
+    position: relative;
+    border-radius: 2px;
+}
+
+/* 진행 바 채움 */
+.progressBarFill {
+    width: 5%;
+    height: 100%;
+    background-color: #d9534f;
+    border-radius: 2px;
 }
 
 .tradeButtons {
@@ -33,29 +67,38 @@ body {
     gap: 5px;
 }
 
-.buyBtn, .sellBtn, .nextNtn {
+/* 메인 화면 매수 및 매도 버튼 */
+.buyBtn, .sellBtn {
     padding: 10px;
     font-size: 14px;
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    color: white;
 }
 
 .buyBtn {
-    background-color: #d9534f;
-    color: white;
+    background-color: #f5a5a5; /* 연한 빨간색 */
 }
 
 .sellBtn {
-    background-color: #5bc0de;
-    color: white;
+    background-color: #a2c2e2; /* 연한 파란색 */
 }
 
-.nextNtn {
+.nextBtn {
+    width: 50px;
+    height: 50px;
     background-color: #333;
     color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: bold;
 }
 
+/* 게임 상태 */
 .gameStatus {
     background-color: #f9f9f9;
     padding: 10px;
@@ -113,13 +156,183 @@ body {
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
-    text-align: center; /* 텍스트를 가운데 정렬 */
+    text-align: center;
     color: #888;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .tradeHistory p {
-    margin: 0; /* 문단 간의 기본 여백 제거 */
-    padding: 5px 0; /* 위아래 여백 추가 */
-    display: block; /* 각 내역이 새로운 줄에 나오도록 설정 */
+    margin: 0;
+    padding: 5px 0;
+    display: block;
+}
+
+/* buy,sell 모달배경 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* buy,sell 컨텐츠 */
+.content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+}
+
+/* 주문 */
+.orderInfo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* 퍼센트 버튼 */
+.percentageButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.percentBtn {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.percentBtn:hover {
+    background-color: #ddd;
+}
+
+/* 주문단가 총 금액 */
+.priceInfo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.price,
+.totalPrice {
+    font-weight: bold;
+}
+
+/* 매수 모달창 */
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 매수 모달창의 취소 버튼 */
+.cancelBtn {
+    flex: 1;
+    padding: 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #f8d7da; /* 연한 빨간색 */
+    color: #721c24;
+}
+
+.cancelBtn:hover {
+    opacity: 0.9;
+}
+
+/* 매수 모달창의 매수 버튼 */
+.buyBtn {
+    flex: 1;
+    padding: 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #d9534f; /* 빨간색 */
+    color: #ffffff;
+}
+
+.buyBtn:hover {
+    opacity: 0.9;
+}
+
+/* 매도 모달창 */
+.cancelBtn1, .sellBtn {
+    flex: 1;
+    padding: 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+/* 매도 모달창의 취소 버튼 */
+.cancelBtn1 {
+    background-color: #d0e7ff; /* 연한 파란색 */
+    color: #0056b3;
+}
+
+.cancelBtn1:hover {
+    opacity: 0.9;
+}
+
+/* 매도 모달창의 매도 버튼 */
+.sellBtn {
+    background-color: #0056b3; /* 파란색 */
+    color: #ffffff;
+}
+
+.sellBtn:hover {
+    opacity: 0.9;
+}
+
+/* 닫기 버튼 */
+.close, .close1 {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: red;
+}
+
+.close1:hover, .close1:focus {
+    color: #0051ff;
+}
+
+/* 제목 */
+.buyTitle {
+    color: red;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sellTitle {
+    color: #0048ff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 매수 주문 가능 버튼 */
+.orderAvailability .highlight {
+    color: red;
+    font-weight: bold;
+}
+
+.orderAvailability1 .highlight1 {
+    color: #0048ff;
+    font-weight: bold;
 }

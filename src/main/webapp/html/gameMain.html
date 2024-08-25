@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <meta name="KOSA투자증권" content="width=device-width, initial-scale=1.0">
     <title>KOSA투자증권</title>
-    <link rel="stylesheet" href="../css/modal.css">
     <link rel="stylesheet" href="../css/gameMain.css">
     <script src="../jquery-3.7.1.js"></script>
 </head>
 <body>
 <div class="container">
-    <!-- 우측 게임 현황 영역 -->
+    <!-- 게임 현황 영역 -->
     <div class="infoArea">
         <!-- 게임 라운드 -->
         <div class="roundInfo">
-            <span>01</span>/<span>20턴</span>
+            <span id="turn">1</span>/<span id="lastTurn">20<span>턴</span></span>
         </div>
+
+        <!-- 진행 바 -->
+        <div class="progressBar">
+            <div class="progressBarFill"></div>
+        </div>
+
         <!-- 정보 및 버튼 -->
         <div class="topSection">
             <div class="tradeButtons">
