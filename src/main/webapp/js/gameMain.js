@@ -132,7 +132,7 @@ new Vue({
                         }]
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
                     animation: false,
                     maintainAspectRatio: false,
 
@@ -156,7 +156,8 @@ new Vue({
                             position: 'right',
                             grid: {
                                 display: false
-                            }
+                            },
+                            offset: true,
                         }
                     },
                     plugins: {
@@ -208,7 +209,6 @@ new Vue({
         },
         renderVolumeChart: function () {
             const ctx = document.getElementById('volumeChart').getContext('2d');
-            ctx.canvas.height = 200;
 
             if (this.volumeChart) {
                 this.volumeChart.destroy();
@@ -230,7 +230,7 @@ new Vue({
                     }]
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
                     animation: false,
                     maintainAspectRatio: false,
                     scales: {
@@ -251,9 +251,14 @@ new Vue({
                         y: {
                             beginAtZero: true,
                             position: 'right',
+                            ticks: {
+                                display: false,
+                                source: 'auto'
+                            },
                             grid: {
                                 display: false
-                            }
+                            },
+                            offset: true,
                         }
                     },
                     plugins: {
