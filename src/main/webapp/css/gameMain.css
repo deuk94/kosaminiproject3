@@ -400,3 +400,42 @@ body {
     color: #0048ff;
     font-weight: bold;
 }
+/* 반응형 웹 - 모바일 환경 설정 */
+@media (max-width: 1000px) {
+    /* 컨테이너를 수직으로 배치 */
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* 차트와 게임 제어 영역이 수직으로 배치되도록 설정 */
+    #chart-container {
+        width: 100%;
+        height: 50vh; /* 높이를 화면 높이의 절반으로 설정 */
+    }
+
+    .infoArea {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+    }
+
+    /* 그래프 크기 조정 */
+    #coinChart, #volumeChart {
+        height: 45%;
+    }
+
+    /* 진행 바 크기 조정 */
+    .progressBar {
+        width: 100%;
+        height: 5px;
+    }
+    .buyBtn, .sellBtn{
+        width: 200px;
+        height: 50px;
+    }
+    .nextBtn{
+        width: 100px;
+        height: 100px;
+    }
+}
