@@ -10,16 +10,23 @@ new Vue({
         sma5: [],
         sma10: [],
         sma20: [],
-        sma60: []
+        sma60: [],
+        market: 'KRW-BTC'
     },
     mounted() {
+        this.market = this.getQueryParameter('asset') || 'BTC';
         this.getData();
     },
     methods: {
+        getQueryParameter: function(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            console.log(urlParams.get(name));
+            return urlParams.get(name) ? `${urlParams.get(name)}` : 'KRW-BTC';
+        },
         getData: function () {
             axios.get('https://api.upbit.com/v1/candles/days', {
                 params: {
-                    market: 'KRW-BTC',
+                    market: this.market,
                     to: '2024-06-01T09:00:00Z',
                     count: 200,
                 }
@@ -64,7 +71,7 @@ new Vue({
                 type: 'candlestick',
                 data: {
                     datasets: [{
-                        label: 'BTC',
+                        label: this.market,
                         data: this.coin,
                         borderColors: {
                             up: 'red',
@@ -268,7 +275,7 @@ new Vue({
 
             axios.get('https://api.upbit.com/v1/candles/days', {
                 params: {
-                    market: 'KRW-BTC',
+                    market: this.market,
                     to: this.lastDate,
                     count: 1,
                 }
