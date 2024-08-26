@@ -754,7 +754,7 @@ $(document).ready(function () {
 
         // 수익률
         let ROI = ((parseInt($("#totalValue").data("value")) - parseInt(initialAccount)) / parseInt(initialAccount) * 100);
-       // let ROI1 = ((parseInt($("#coinValue").data("value")) - parseInt($("#totalOrderPrice").data("value"))) / parseInt($("#totalOrderPrice").data("value")) * 100);
+        // let ROI1 = ((parseInt($("#coinValue").data("value")) - parseInt($("#totalOrderPrice").data("value"))) / parseInt($("#totalOrderPrice").data("value")) * 100);
         ROI = Math.round(ROI * 100) / 100; // 소수점 둘째자리 표시
         //ROI1 = Math.round(ROI1 * 100) / 100; // 소수점 둘째자리 표시
         $("#changePercent").text("(" + ROI + "%)");
