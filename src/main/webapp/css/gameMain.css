@@ -4,12 +4,40 @@ body {
     padding: 0;
     background-color: #f4f4f4;
     display: flex;
-    justify-content: flex-end; /* 전체를 오른쪽으로 붙이기 */
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* 게임 현황 영역 */
+/* 전체 컨테이너 설정 */
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* 그래프 영역 */
+#chart-container {
+    width: 70%; /* 그래프가 보일 영역의 너비 */
+    height: 100%;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#coinChart {
+    width: 100%; /* 캔들 차트의 실제 너비 */
+    height: 50%; /* 차트 높이 조정 */
+}
+
+#volumeChart {
+    width: 97.5%;
+    height: 50%; /* 거래량 차트 높이 조정 */
+}
+
+/* 게임 제어 영역 */
 .infoArea {
-    width: 350px;
+    width: 30%;
     padding: 20px;
     background-color: white;
     border: 1px solid #e0e0e0;
@@ -17,14 +45,17 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    box-sizing: border-box;
 }
 
+/* 상단 섹션 */
 .topSection {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+/* 게임 라운드 */
 .roundInfo {
     font-size: 20px; /* 수정: 폰트 크기 통일 */
     font-weight: bold;
@@ -62,6 +93,7 @@ body {
     border-radius: 2px;
 }
 
+/* 매매 버튼 */
 .tradeButtons {
     display: flex;
     gap: 5px;
@@ -158,7 +190,7 @@ body {
     border-radius: 5px;
     text-align: center;
     color: #888;
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .tradeHistory p {

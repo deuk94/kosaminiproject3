@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="KOSA투자증권" content="width=device-width, initial-scale=1.0">
-    <title>KOSA투자증권</title>
+    <title>코인 차트</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <link rel="stylesheet" href="../css/gameMain.css">
     <script src="../jquery-3.7.1.js"></script>
 </head>
 <body>
-<div class="container">
-    <!-- 게임 현황 영역 -->
+<div class="container" id="app">
+    <!-- 그래프 부분 -->
+    <div id="chart-container">
+        <canvas id="coinChart"></canvas>
+        <canvas id="volumeChart"></canvas>
+    </div>
+
+    <!-- 게임 제어 영역 -->
     <div class="infoArea">
         <!-- 게임 라운드 -->
         <div class="roundInfo">
@@ -27,7 +38,7 @@
                 <button id="buyBtn" class="buyBtn">매수</button>
                 <button id="sellBtn" class="sellBtn">매도</button>
             </div>
-            <button id="nextBtn" class="nextBtn">다음 턴</button>
+            <button v-on:click="addNextCandle" id="nextBtn" class="nextBtn">다음 턴</button>
         </div>
 
         <!-- 매수 모달 화면 -->
@@ -91,17 +102,17 @@
         <!-- 게임 현황 -->
         <div class="gameStatus">
             <h3>게임현황</h3>
-            <div class="initialAsset">초기자산 10,000,000원</div>
+            <div class="initialAsset">초기자산 100,000,000,000원</div>
             <div class="totalAsset">
                 <div>총 평가자산</div>
-                <div><span id="totalValue" class="initialAsset">10,000,000</span>원</div>
+                <div><span id="totalValue" class="initialAsset">100,000,000,000</span>원</div>
                 <div class="change"><span id="changePercent" class="change"></span></div>
             </div>
             <table>
                 <tr>
                     <th>보유현금</th>
                     <td>
-                        <sapn id="cash"></sapn>
+                        <span id="cash"></span>
                         원
                     </td>
                 </tr>
@@ -139,6 +150,5 @@
     </div>
 </div>
 <script src="../js/gameMain.js"></script>
-
 </body>
 </html>

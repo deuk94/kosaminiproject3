@@ -1,15 +1,458 @@
+new Vue({
+    el: '#app',
+    data: {
+        coin: [], // 코인 데이터를 저장할 배열
+        volume: [],
+        chart: null, // 차트를 저장할 변수
+        volumeChart: null,
+        lastDate: null,
+        lastClose: 0,
+        sma5: [],
+        sma10: [],
+        sma20: [],
+        sma60: []
+    },
+    mounted() {
+        this.getData();
+    },
+    methods: {
+        getData: function () {
+            axios.get('https://api.upbit.com/v1/candles/days', {
+                params: {
+                    market: 'KRW-BTC',
+                    to: '2024-06-01T09:00:00Z',
+                    count: 200,
+                }
+            }).then((response) => {
+                this.coin = response.data.map(candle => ({
+                    x: new Date(candle.candle_date_time_kst),
+                    o: candle.opening_price,
+                    h: candle.high_price,
+                    l: candle.low_price,
+                    c: candle.trade_price
+                }));
+                this.volume = response.data.map(candle => ({
+                    x: new Date(candle.candle_date_time_kst),
+                    y: candle.candle_acc_trade_volume
+                }));
+
+                this.lastDate = new Date(response.data[0].candle_date_time_kst);
+                this.lastDate.setDate(this.lastDate.getDate()+1);
+
+                this.lastClose = this.coin[0].c;
+                //초기값 세팅
+                $("#currentPrice").data("value",this.lastClose);
+                $("#currentPrice").text(this.lastClose.toLocaleString());
+                this.renderChart(); // 데이터를 가져온 후 차트를 렌더링
+                this.renderVolumeChart();
+            }).catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+        },
+        renderChart: function () {
+            const ctx = document.getElementById('coinChart').getContext('2d');
+
+            if (this.chart) {
+                this.chart.destroy(); // 기존 차트가 있으면 삭제
+            }
+
+            this.sma5 = calculateSMA(this.coin, 5);
+            this.sma10 = calculateSMA(this.coin, 10);
+            this.sma20 = calculateSMA(this.coin, 20);
+            this.sma60 = calculateSMA(this.coin, 60);
+            this.chart = new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    datasets: [{
+                        label: 'BTC',
+                        data: this.coin,
+                        borderColors: {
+                            up: 'red',
+                            down: 'blue',
+                            unchanged: '#999'
+                        }, // 캔들 경계선 색상
+                        backgroundColors: {
+                            up: 'red',
+                            down: 'blue',
+                            unchanged: '#999'
+                        }, // 캔들 내부 색상
+                        barPercentage: 0.032, // 각 캔들의 상대적인 너비 설정 (0~1 사이의 값)
+                        categoryPercentage: 0.7 // 각 카테고리(날짜)의 상대적인 너비 설정
+                    },
+                        {
+                            label: '5',
+                            type: 'line',
+                            data: this.sma5,
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                        },
+                        {
+                            label: '10',
+                            type: 'line',
+                            data: this.sma10,
+                            borderColor: 'red',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+
+                        },
+                        {
+                            label: '20',
+                            type: 'line',
+                            data: this.sma20,
+                            borderColor: 'yellow',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                        },
+                        {
+                            label: '60',
+                            type: 'line',
+                            data: this.sma60,
+                            borderColor: 'green',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                        }]
+                },
+                options: {
+                    responsive: false,
+                    animation: false,
+                    maintainAspectRatio: false,
+
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            },
+                            ticks: {
+                                source: 'auto'
+                            },
+                            offset: true,
+                            display: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            position: 'right',
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+
+                        legend: {
+                            display: true,
+                            position: 'top', // 범례 위치를 상단으로 설정
+                            align: 'start', // 범례를 왼쪽으로 정렬
+                            labels: {
+                                usePointStyle: true, // 범례 마커를 점으로 변경
+                                boxWidth: 0, // 범례 박스 너비를 0으로 설정하여 사라지게 함
+                                padding: 10, // 범례 항목 간의 패딩
+                                color: 'black', // 텍스트 색상 설정
+                                font: {
+                                    size: 18, // 범례 텍스트 크기 설정 (예: 16px)
+                                    weight: 'bold' // 텍스트 굵기 설정 (선택 사항)
+                                },
+
+                            },
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'nearest',
+                            intersect: false, // 커서가 캔들에 정확히 교차하지 않아도 툴팁이 보이도록 설정
+                            filter: function (tooltipItem) {
+                                return tooltipItem.datasetIndex === 0; // 첫 번째 데이터셋(BTC)만 툴팁을 표시
+                            },
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    if (tooltipItems.length > 0 && tooltipItems[0].label) {
+                                        return `Date: ${tooltipItems[0].label}`;
+                                    } else {
+                                        return ''; // label이 없을 경우 빈 문자열 반환
+                                    }
+                                },
+                                label: function(tooltipItems) {
+                                    let ohlc = tooltipItems.formattedValue.split(' ');
+                                    return [
+                                        `Open: ${ohlc[1]}`,
+                                        `High: ${ohlc[4]}`,
+                                        `Low: ${ohlc[7]}`,
+                                        `Close: ${ohlc[10]}`,
+                                    ]}
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        renderVolumeChart: function () {
+            const ctx = document.getElementById('volumeChart').getContext('2d');
+            ctx.canvas.height = 200;
+
+            if (this.volumeChart) {
+                this.volumeChart.destroy();
+            }
+
+            this.volumeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        label: 'Volume',
+                        data: this.volume,
+                        backgroundColor: (context) => {
+                            const index = context.dataIndex;
+                            const currentCandle = this.coin[index];
+                            return currentCandle.c > currentCandle.o ? 'red' : 'blue';
+                        },
+                        barPercentage: 0.9, // 각 캔들의 상대적인 너비 설정 (0~1 사이의 값)
+                        categoryPercentage: 1
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    animation: false,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            },
+                            ticks: {
+                                display: false,
+                                source: 'auto'
+                            },
+                            offset: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            position: 'right',
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // 범례 숨기기
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'nearest',
+                            intersect: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return `Date: ${tooltipItems[0].label}`;
+                                },
+                                label: function(tooltipItems) {
+                                    return `Volume: ${tooltipItems.formattedValue}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        addNextCandle: function(){
+            this.lastDate.setDate(this.lastDate.getDate()+1);
+
+            axios.get('https://api.upbit.com/v1/candles/days', {
+                params: {
+                    market: 'KRW-BTC',
+                    to: this.lastDate,
+                    count: 1,
+                }
+            }).then((response) => {
+
+                let coin = response.data[0];
+                let newCoin = {
+                    x: new Date(coin.candle_date_time_kst),
+                    o: coin.opening_price,
+                    h: coin.high_price,
+                    l: coin.low_price,
+                    c: coin.trade_price
+                };
+                let newVolume = {
+                    x: new Date(coin.candle_date_time_kst),
+                    y: coin.candle_acc_trade_volume
+                };
+
+                this.coin.unshift(newCoin); // 데이터를 가져온 후 차트를 렌더링
+                this.coin.pop();
+                this.volume.unshift(newVolume);
+                this.volume.pop();
+
+                this.lastClose = newCoin.c;
+                console.log(this.lastClose);
+                this.sma5.unshift(OnceCalculateSMA(this.coin, 5));
+                this.sma10.unshift(OnceCalculateSMA(this.coin, 10));
+                this.sma20.unshift(OnceCalculateSMA(this.coin, 20));
+                this.sma60.unshift(OnceCalculateSMA(this.coin, 60));
+
+                // 게임 횟수 및 진행 바
+                let turn = parseInt($("#turn").text());
+                let lastTurn = parseInt($("#lastTurn").text());
+                let turnWidth = 100 / lastTurn;
+                $(".progressBarFill").css("width", turn * turnWidth + "%");
+                if (turn >= lastTurn) {
+                    parseInt($("#turn").text(lastTurn));
+                    alert("게임이 끝났습니다.");
+
+                } else {
+                    turn++;
+                    $("#turn").text(turn);
+                    $('.progressBarFill').css("width", turn * turnWidth + "%");
+                    $("#currentPrice").data("value",this.lastClose);
+                    $("#currentPrice").text(this.lastClose.toLocaleString());
+                    this.chart.update();
+                    this.volumeChart.update();
+                }
+                // 현재가를 업데이트
+                let price = $("#currentPrice").data("value");
+                console.log("price : "+price)
+                let newPrice = parseInt(price);
+                let currentPrice = newPrice;
+
+                // 매수 주문 단가 업데이트
+                $("#orderPrice").data("value", currentPrice);
+                $("#orderPrice").text(currentPrice.toLocaleString());
+
+                // 매도 주문 단가 업데이트
+                $("#orderPrice1").data("value", currentPrice);
+                $("#orderPrice1").text(currentPrice.toLocaleString());
+
+                // 매수 가능 코인 수량 업데이트
+                // 수정 사항 - 주문 가능 코인 내림 처리
+                $("#orderPossibility").data("value",
+                    Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value")))
+                );
+                $("#orderPossibility").text(
+                    Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value"))).toLocaleString()
+                );
+
+                // 코인 평가금 업데이트
+                let coinValue= parseInt($("#coinCount").data("value")) * parseInt($("#currentPrice").data("value"));
+                $("#coinValue").data("value", coinValue);
+                $("#coinValue").text(coinValue.toLocaleString());
+
+                // 총 평가 자산
+                let totalValue = parseInt($("#cash").data("value")) + parseInt($("#coinValue").data("value"));
+                $("#totalValue").data("value", totalValue);
+                $("#totalValue").text(totalValue.toLocaleString());
+
+                // 수익률
+                let ROI;
+                // 초기 수익률 초기화
+                if (parseInt($("#coinValue").data("value")) === 0) {
+                    ROI = 0;
+                } else {
+                    // 현재가에 따른 수익률
+                    ROI = (((parseInt($("#coinValue").data("value")) - parseInt(initialAccount)) / parseInt(initialAccount)) * 100);
+                }
+                ROI = Math.round(ROI * 100) / 100; // 소수점 둘째자리 표시
+                $("#changePercent").text("(" + ROI + "%)");
+                $("#ROI").text(ROI + "%");
+                // 수익률에 따른 색 변화
+                if (ROI > 0) {
+                    $("#changePercent").css("color", "red");
+                    $("#ROI").css("color", "red");
+                }  else if (ROI === 0) {
+                    $("#changePercent").css("color", "black");
+                    $("#ROI").css("color", "black");
+                } else {
+                    $("#changePercent").css("color", "blue");
+                    $("#ROI").css("color", "blue");
+                }
+            }).catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+        },
+    }
+});
+
+function calculateSMA(data, period) {
+    let smaData = [];
+    for (let i = 0; i < data.length-period; i++) {
+        let sum = 0;
+        for (let j = i; j < i+period; j++) {
+            sum += data[j].c;
+        }
+        smaData.push({
+            x: data[i].x,
+            y: sum / period
+        });
+    }
+    return smaData;
+}
+function OnceCalculateSMA(data, period) {
+    let sum = 0;
+
+    for (let j = 0; j < period; j++) {
+        sum += data[j].c;
+    }
+    let smaData = {
+        x: data[0].x,
+        y: sum / period
+    };
+    return smaData;
+}
+
 // ------------------------------------------------ 모달 창 ----------------------------------------------------
 $(document).ready(function () {
     // 매수 버튼 클릭 시 매수 모달 보이기
     $("#buyBtn").click(function () {
         $("#buyModal").show();
         $("#orderQuantity").val(0);
+
+        // 현재가를 업데이트
+        let price = $("#currentPrice").data("value");
+        console.log("price : "+price)
+        let newPrice = parseInt(price);
+        let currentPrice = newPrice;
+
+        // 매수 주문 단가 업데이트
+        $("#orderPrice").data("value", currentPrice);
+        $("#orderPrice").text(currentPrice.toLocaleString());
+
+        $("#orderPossibility").data("value",
+            Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value")))
+        );
+        $("#orderPossibility").text(
+            Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value"))).toLocaleString()
+        );
     });
 
     // 매도 버튼 클릭 시 매도 모달 보이기
     $("#sellBtn").click(function () {
         $("#sellModal").show();
         $("#orderQuantity").val(0);
+
+        // 현재가를 업데이트
+        let price = $("#currentPrice").data("value");
+        console.log("price : "+price)
+        let newPrice = parseInt(price);
+        let currentPrice = newPrice;
+
+        // 매도 주문 단가 업데이트
+        $("#orderPrice1").data("value", currentPrice);
+        $("#orderPrice1").text(currentPrice.toLocaleString());
+
+        $("#orderPossibility").data("value",
+            Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value")))
+        );
+        $("#orderPossibility").text(
+            Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value"))).toLocaleString()
+        );
     });
 
     // 매수 모달 닫기 (X 버튼 클릭 시)
@@ -42,86 +485,12 @@ $(document).ready(function () {
             $("#sellModal").hide();
         }
     });
-
-    // 다음 버튼(test용)
-    $("#nextBtn").click(function () {
-        // 게임 횟수 및 진행 바
-        let turn = parseInt($("#turn").text());
-        let lastTurn = parseInt($("#lastTurn").text());
-        let turnWidth = 100 / lastTurn;
-        $(".progressBarFill").css("width", turn * turnWidth + "%");
-        if (turn >= lastTurn) {
-            parseInt($("#turn").text(lastTurn));
-        } else {
-            turn++;
-            $("#turn").text(turn);
-            $('.progressBarFill').css("width", turn * turnWidth + "%");
-        }
-
-        // 현재가를 업데이트
-        let price = prompt("금액을 입력하세요");
-        let newPrice = parseInt(price);
-        $("#currentPrice").data("value", newPrice);
-        $("#currentPrice").text(newPrice.toLocaleString());
-        currentPrice = newPrice;
-
-        // 매수 주문 단가 업데이트
-        $("#orderPrice").data("value", currentPrice);
-        $("#orderPrice").text(currentPrice.toLocaleString());
-
-        // 매도 주문 단가 업데이트
-        $("#orderPrice1").data("value", currentPrice);
-        $("#orderPrice1").text(currentPrice.toLocaleString());
-
-        // 매수 가능 코인 수량 업데이트
-        // 수정 사항 - 주문 가능 코인 내림 처리
-        $("#orderPossibility").data("value",
-            Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value")))
-        );
-        $("#orderPossibility").text(
-            Math.floor(parseFloat($("#cash").data("value")) / parseFloat($("#currentPrice").data("value"))).toLocaleString()
-        );
-
-        // 코인 평가금 업데이트
-        let coinValue= parseInt($("#coinCount").data("value")) * parseInt($("#currentPrice").data("value"));
-        $("#coinValue").data("value", coinValue);
-        $("#coinValue").text(coinValue.toLocaleString());
-
-        // 총 평가 자산
-        let totalValue = parseInt($("#cash").data("value")) + parseInt($("#coinValue").data("value"));
-        $("#totalValue").data("value", totalValue);
-        $("#totalValue").text(totalValue.toLocaleString());
-
-        // 수익률
-        let ROI;
-        // 초기 수익률 초기화
-        if (parseInt($("#coinValue").data("value")) === 0) {
-            ROI = 0;
-        } else {
-            // 현재가에 따른 수익률
-            ROI = (((parseInt($("#coinValue").data("value")) - parseInt(initialAccount)) / parseInt(initialAccount)) * 100);
-        }
-        ROI = Math.round(ROI * 100) / 100; // 소수점 둘째자리 표시
-        $("#changePercent").text("(" + ROI + "%)");
-        $("#ROI").text(ROI + "%");
-        // 수익률에 따른 색 변화
-        if (ROI > 0) {
-            $("#changePercent").css("color", "red");
-            $("#ROI").css("color", "red");
-        }  else if (ROI === 0) {
-            $("#changePercent").css("color", "black");
-            $("#ROI").css("color", "black");
-        } else {
-            $("#changePercent").css("color", "blue");
-            $("#ROI").css("color", "blue");
-        }
-    });
 });
 
 
 // ------------------------------------------------ 기능구현 -------------------------------------------------------
 
-let initialAccount = 10000000; // 초기 자산
+let initialAccount = 100000000000; // 초기 자산
 $("#cash").data("value", initialAccount); // 초기 보유
 $("#cash").text(initialAccount.toLocaleString());
 let coinCount = 0;
