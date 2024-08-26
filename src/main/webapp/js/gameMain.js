@@ -20,14 +20,21 @@ new Vue({
     methods: {
         getQueryParameter: function(name) {
             const urlParams = new URLSearchParams(window.location.search);
-            console.log(urlParams.get(name));
             return urlParams.get(name) ? `${urlParams.get(name)}` : 'KRW-BTC';
         },
         getData: function () {
+            let today = new Date();
+            const randomDaysAgo = Math.floor(Math.random() * (1000 - 20)) + 20;
+            const randomDate = new Date(today);
+            randomDate.setDate(today.getDate() - randomDaysAgo);
+
+            const formattedDate = randomDate.toISOString().split('T')[0] + "T09:00:00Z";
+
+            console.log(formattedDate);
             axios.get('https://api.upbit.com/v1/candles/days', {
                 params: {
                     market: this.market,
-                    to: '2024-06-01T09:00:00Z',
+                    to: formattedDate,
                     count: 200,
                 }
             }).then((response) => {
@@ -300,7 +307,6 @@ new Vue({
                 this.volume.pop();
 
                 this.lastClose = newCoin.c;
-                console.log(this.lastClose);
                 this.sma5.unshift(OnceCalculateSMA(this.coin, 5));
                 this.sma10.unshift(OnceCalculateSMA(this.coin, 10));
                 this.sma20.unshift(OnceCalculateSMA(this.coin, 20));
@@ -326,7 +332,6 @@ new Vue({
                 }
                 // 현재가를 업데이트
                 let price = $("#currentPrice").data("value");
-                console.log("price : "+price)
                 let newPrice = parseInt(price);
                 let currentPrice = newPrice;
 
