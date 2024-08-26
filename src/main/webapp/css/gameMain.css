@@ -19,13 +19,12 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-
+    font-size: 30px;
     z-index: 1000; /* 헤더를 다른 요소들 위에 배치 */
 }
 
 /* 헤더 링크 스타일 */
 .head a {
-    font-size: 30px;
     color: #000; /* 검은색 글자 */
     text-decoration: none;
     font-weight: bold;

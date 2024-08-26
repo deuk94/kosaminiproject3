@@ -364,17 +364,14 @@ new Vue({
 
                 // 수익률
                 let ROI ;
-                // let ROI1;
                 // 초기 수익률 초기화
                 if (parseInt($("#totalValue").data("value")) === 100000000) {
                     ROI = 0;
                 } else {
                     // 현재가에 따른 수익률
                     ROI = (((parseInt($("#totalValue").data("value")) - parseInt(initialAccount)) / parseInt(initialAccount)) * 100);
-                    //ROI1 = ((parseInt($("#coinValue").data("value")) - parseInt($("#totalOrderPrice").data("value"))) / parseInt($("#totalOrderPrice").data("value")) * 100);
                 }
                 ROI = Math.round(ROI * 100) / 100; // 소수점 둘째자리 표시
-                // ROI1 = Math.round(ROI1 * 100) / 100; // 소수점 둘째자리 표시
                 $("#changePercent").text("(" + ROI + "%)");
                 $("#ROI").text(ROI + "%");
 
@@ -628,9 +625,7 @@ $(document).ready(function () {
 
         // 수익률
         let ROI = ((parseInt($("#totalValue").data("value")) - parseInt(initialAccount)) / parseInt(initialAccount) * 100);
-        //let ROI1 = ((parseInt($("#coinValue").data("value")) - parseInt($("#totalOrderPrice").data("value"))) / parseInt($("#totalOrderPrice").data("value")) * 100);
         ROI = Math.round(ROI * 100) / 100; // 소수점 둘째자리 표시
-        //ROI1 = Math.round(ROI1 * 100) / 100; // 소수점 둘째자리 표시
         $("#changePercent").text("(" + ROI + "%)");
         $("#ROI").text(ROI + "%");
         // 수익률에 따른 색 변화
@@ -660,9 +655,6 @@ $(document).ready(function () {
     });
 
 // ------------------------------------------------ 매도 ---------------------------------------------------------------
-    // 매도 주문가능 코인 수량 업데이트
-    // $("#orderPossibility1").data("value",$("#coinCount").data("value"));
-    // $("#orderPossibility1").text((parseInt($("#coinCount").data("value"))).toLocaleString());
 
     // 매도 주문 수량 입력 시
     // 수정 사항 - 매도시 기존 수량 넘어갈 시, 음수 입력시 다시 입력
@@ -749,9 +741,7 @@ $(document).ready(function () {
 
         // 수익률
         let ROI = ((parseInt($("#totalValue").data("value")) - parseInt(initialAccount)) / parseInt(initialAccount) * 100);
-       // let ROI1 = ((parseInt($("#coinValue").data("value")) - parseInt($("#totalOrderPrice").data("value"))) / parseInt($("#totalOrderPrice").data("value")) * 100);
         ROI = Math.round(ROI * 100) / 100; // 소수점 둘째자리 표시
-        //ROI1 = Math.round(ROI1 * 100) / 100; // 소수점 둘째자리 표시
         $("#changePercent").text("(" + ROI + "%)");
         $("#ROI").text(ROI + "%");
         // 수익률에 따른 색 변화
