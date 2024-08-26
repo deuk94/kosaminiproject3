@@ -46,27 +46,29 @@ body {
 
 /* 그래프 영역 */
 #chart-container {
-    width: 70%; /* 그래프가 보일 영역의 너비 */
-    height: 100%;
-    border: 1px solid #d3d3d3;
-    border-radius: 10px;
+    width: 70vw; /* 그래프가 보일 영역의 너비 */
+    height: 50vh;
+    /*border: 1px solid #d3d3d3;*/
+    /*border-radius: 10px;*/
     padding: 10px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 #coinChart {
     width: 100%; /* 캔들 차트의 실제 너비 */
-    height: 50%; /* 차트 높이 조정 */
+    height: 70%; /* 차트 높이 조정 */
 }
 
 #volumeChart {
-    width: 97.5%;
-    height: 50%; /* 거래량 차트 높이 조정 */
+    width: 100%;
+    height: 30%; /* 거래량 차트 높이 조정 */
 }
 
 /* 게임 제어 영역 */
 .infoArea {
-    width: 30%;
+    width: 30vw;
     padding: 20px;
     background-color: white;
     border: 1px solid #e0e0e0;
