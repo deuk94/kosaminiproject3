@@ -363,10 +363,10 @@ new Vue({
                 $("#totalValue").text(totalValue.toLocaleString());
 
                 // 수익률
-                let ROI;
+                let ROI ;
                 // let ROI1;
                 // 초기 수익률 초기화
-                if (parseInt($("#coinValue").data("value")) === 0) {
+                if (parseInt($("#totalValue").data("value")) === 100000000) {
                     ROI = 0;
                 } else {
                     // 현재가에 따른 수익률
@@ -649,7 +649,7 @@ $(document).ready(function () {
         $("#tradeList").append(
             `<tr>
                 <td style="font-weight: bold; color: black"><span style="color : red">매수
-                    </span>- 수량: ${parseInt($("#orderQuantity").val())}개, 
+                    </span>- 수량: ${parseInt($("#orderQuantity").val()).toLocaleString()}개, 
                     단가: ${parseInt($("#currentPrice").data("value")).toLocaleString()}원, 
                     총금액: ${parseInt($("#totalOrderPrice").data("value")).toLocaleString()}원</td>
             </tr>`
@@ -770,7 +770,7 @@ $(document).ready(function () {
         $("#tradeList").append(
             `<tr>
                 <td style="font-weight: bold; color: black"><span style="color : blue">매도
-                    </span>- 수량: ${parseInt($("#orderQuantity1").val())}개, 
+                    </span>- 수량: ${parseInt($("#orderQuantity1").val()).toLocaleString()}개, 
                     단가: ${parseInt($("#currentPrice").data("value")).toLocaleString()}원, 
                     총금액: ${parseInt($("#totalOrderPrice1").data("value")).toLocaleString()}원</td>
             </tr>`
