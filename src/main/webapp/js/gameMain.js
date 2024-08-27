@@ -453,7 +453,7 @@ $(document).ready(function () {
     // 매도 버튼 클릭 시 매도 모달 보이기
     $("#sellBtn").click(function () {
         $("#sellModal").show();
-        $("#orderQuantity").val(0);
+        $("#orderQuantity1").val(0);
 
         // 현재가를 업데이트
         let price = $("#currentPrice").data("value");
